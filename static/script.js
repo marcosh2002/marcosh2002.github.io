@@ -24,25 +24,48 @@ function showSlide(index) {
     const allSlides = document.querySelectorAll('.hero-bg-slide');
     
     if (allSlides.length === 0) {
-        console.error('No slides found!');
+        console.error('❌ No slides found!');
         return;
     }
+    
+    // Log current slide info
+    const currentSlide = allSlides[index];
+    const bgImage = window.getComputedStyle(currentSlide).backgroundImage;
+    console.log(`Slide ${index + 1} background-image:`, bgImage);
     
     // Hide all slides
     allSlides.forEach((slide, i) => {
         slide.style.opacity = '0';
         slide.style.transition = 'opacity 1s ease-in-out';
-        console.log(`Hiding slide ${i + 1}`);
     });
     
     // Show current slide
     allSlides[index].style.opacity = '1';
-    console.log(`✓ Now showing slide ${index + 1}/${slides.length}`);
+    console.log(`✓ Showing slide ${index + 1}/${slides.length}`);
 }
 
 // Initialize carousel
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded - Setting up carousel');
+    console.log('✓ DOM loaded - Setting up carousel');
+    console.log('Slides array:', slides);
+    
+    const allSlides = document.querySelectorAll('.hero-bg-slide');
+    console.log(`Found ${allSlides.length} slide elements`);
+    
+    // Check each slide's background-image
+    allSlides.forEach((slide, i) => {
+        const bgImage = window.getComputedStyle(slide).backgroundImage;
+        console.log(`Slide ${i + 1} computed background-image:`, bgImage);
+        
+        // Add image load listeners
+        if (bgImage && bgImage !== 'none') {
+            const imageUrl = bgImage.slice(5, -2); // Extract URL from url("...")
+            const img = new Image();
+            img.onload = () => console.log(`✓ Image loaded: ${imageUrl}`);
+            img.onerror = () => console.error(`❌ Failed to load: ${imageUrl}`);
+            img.src = imageUrl;
+        }
+    });
     
     // Show first slide immediately
     showSlide(0);
