@@ -11,11 +11,11 @@ const ADMIN_EMAIL = "royaldesicrew@gmail.com"; // Your admin email
 
 // Background Image Carousel for Hero Section
 const slides = [
-    '/static/Images/Background.png',
-    '/static/Images/background%20image%202.jpg',
-    '/static/Images/background%203.jpg',
-    '/static/Images/corporate%20event1.jpeg',
-    '/static/Images/Wedding.png'
+    'static/Images/Background.png',
+    'static/Images/background%20image%202.jpg',
+    'static/Images/background%203.jpg',
+    'static/Images/corporate%20event1.jpeg',
+    'static/Images/Wedding.png'
 ];
 
 let slideIndex = 0;
