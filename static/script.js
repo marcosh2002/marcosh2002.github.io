@@ -1,12 +1,19 @@
 // ===== EmailJS Configuration =====
-// Initialize EmailJS
-emailjs.init("ZbITBo3U3lGnGZVXi"); // Replace with your EmailJS Public Key
-
 // Your EmailJS credentials (replace these)
 const EMAILJS_SERVICE_ID = "service_b8hukgl"; // e.g., "service_abc123"
 const EMAILJS_BOOKING_TEMPLATE = "template_c5e065c"; // Template for booking form
 const EMAILJS_CONSULTATION_TEMPLATE = "template_hx4pwb6"; // Template for consultation
 const ADMIN_EMAIL = "royaldesicrew@gmail.com"; // Your admin email
+
+// Initialize EmailJS when DOM is ready
+function initEmailJS() {
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init("ZbITBo3U3lGnGZVXi");
+        console.log('✓ EmailJS initialized');
+    } else {
+        console.error('❌ EmailJS library not loaded');
+    }
+}
 // ===== End EmailJS Configuration =====
 
 // Background Image Carousel for Hero Section
@@ -47,6 +54,10 @@ function showSlide(index) {
 // Initialize carousel
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✓ DOM loaded - Setting up carousel');
+    
+    // Initialize EmailJS
+    initEmailJS();
+    
     console.log('Slides array:', slides);
     
     const allSlides = document.querySelectorAll('.hero-bg-slide');
