@@ -2,6 +2,21 @@
 
 let currentPhotoId = null;
 
+// Smooth scroll animation observer options
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
 // Initialize gallery on page load
 document.addEventListener('DOMContentLoaded', async function() {
     // Load photos
@@ -12,6 +27,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Setup event listeners
     setupEventListeners();
+    
+    // Setup intersection observer for gallery items
+    setTimeout(() => {
+        document.querySelectorAll('.gallery-item').forEach(el => {
+            observer.observe(el);
+        });
+    }, 100);
     
     // Hamburger Menu Toggle
     const hamburger = document.getElementById('hamburger');
@@ -153,26 +175,4 @@ function setupEventListeners() {
     });
 }
 
-// Smooth scroll animation
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
 
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Observe gallery items
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        document.querySelectorAll('.gallery-item').forEach(el => {
-            observer.observe(el);
-        });
-    }, 100);
-});
