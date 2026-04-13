@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='14' font-weight='bold' fill='%23d4af37'>R</text></svg>" />
     <?php wp_head(); ?>
     
     <!-- Google Analytics -->
