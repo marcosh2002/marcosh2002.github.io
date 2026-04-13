@@ -12,5 +12,83 @@ Domain Path: /languages
 Tags: event, wedding, premium, luxury
 */
 
-/* All CSS is in assets/css/main.css */
-@import url("./assets/css/main.css");
+/* ===== COMPLETE THEME CSS EMBEDDED ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+:root {
+    --gold: #D4AF37;
+    --dark: #000000;
+    --darker: #0a0a0a;
+    --light-gray: #e0e0e0;
+    --text-gray: #b0b0b0;
+    --border-gold: #6b5f2f;
+    --rose-gold: #b76e79;
+    --cream: #f5f1e8;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--dark);
+    color: var(--light-gray);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+    padding-top: 135px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+header.header {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    padding: 0px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 9999;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.hero {
+    margin-top: 0;
+    padding-top: 45px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+header.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    gap: 20px;
+    padding: 5px 0;
+}
+
+section {
+    padding: 80px 0;
+}
+
