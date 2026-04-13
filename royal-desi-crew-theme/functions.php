@@ -44,6 +44,9 @@ add_filter('script_loader_tag', function($tag, $handle) {
     return str_replace('<script ', '<script type="application/javascript" ', $tag);
 }, 10, 2);
 
+// Remove favicon request to avoid 404
+add_filter('site_icon_url', '__return_false');
+
 // Disable admin bar
 add_filter('show_admin_bar', '__return_false');
 
