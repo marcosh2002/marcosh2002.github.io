@@ -1,0 +1,16 @@
+/*
+Theme Name: Royal Desi Crew
+Theme URI: https://royaldesicrew.com
+Author: Royal Desi Crew
+Author URI: https://royaldesicrew.com
+Description: Premium Event Management WordPress Theme for Royal Desi Crew
+Version: 1.0.0
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: royal-desi-crew
+Domain Path: /languages
+Tags: event, wedding, premium, luxury
+*/
+
+/* All CSS is in assets/css/main.css */
+@import url("./assets/css/main.css");

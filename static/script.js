@@ -1,19 +1,10 @@
 // ===== EmailJS Configuration =====
-// Your EmailJS credentials (replace these)
-const EMAILJS_SERVICE_ID = "service_b8hukgl"; // e.g., "service_abc123"
-const EMAILJS_BOOKING_TEMPLATE = "template_c5e065c"; // Template for booking form
-const EMAILJS_CONSULTATION_TEMPLATE = "template_hx4pwb6"; // Template for consultation
-const ADMIN_EMAIL = "royaldesicrew@gmail.com"; // Your admin email
-
-// Initialize EmailJS when DOM is ready
-function initEmailJS() {
-    if (typeof emailjs !== 'undefined') {
-        emailjs.init("ZbITBo3U3lGnGZVXi");
-        console.log('✓ EmailJS initialized');
-    } else {
-        console.error('❌ EmailJS library not loaded');
-    }
-}
+// Your EmailJS credentials
+const EMAILJS_SERVICE_ID = "service_b8hukgl";
+const EMAILJS_BOOKING_TEMPLATE = "template_c5e065c";
+const EMAILJS_CONSULTATION_TEMPLATE = "template_hx4pwb6";
+const ADMIN_EMAIL = "royaldesicrew@gmail.com";
+const EMAILJS_PUBLIC_KEY = "ZbITBo3U3lGnGZVXi";
 // ===== End EmailJS Configuration =====
 
 // Background Image Carousel for Hero Section
@@ -53,10 +44,7 @@ function showSlide(index) {
 
 // Initialize carousel
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✓ DOM loaded - Setting up carousel');
-    
-    // Initialize EmailJS
-    initEmailJS();
+    console.log('✓ DOM loaded - Setting up website');
     
     console.log('Slides array:', slides);
     
@@ -122,6 +110,27 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Gallery Modal Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (galleryModal) {
+        // Close modal when clicking outside the modal-content
+        galleryModal.addEventListener('click', function(event) {
+            if (event.target === galleryModal) {
+                closeGalleryModal();
+            }
+        });
+        
+        // Close modal when pressing Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && galleryModal.classList.contains('show')) {
+                closeGalleryModal();
+            }
+        });
+    }
+});
+
 // Scroll animation for elements
 const observerOptions = {
     threshold: 0.1,
@@ -142,45 +151,6 @@ document.querySelectorAll('.service-card, .gallery-item, .testimonial-card, .pac
     el.style.animation = 'none';
     observer.observe(el);
 });
-
-// EmailJS Configuration
-// Initialize EmailJS (Replace with your public key from EmailJS)
-emailjs.init('YOUR_PUBLIC_KEY_HERE');
-
-// Form submission with EmailJS
-const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Show loading state
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Sending...';
-        submitBtn.disabled = true;
-        
-        // Send email via EmailJS
-        emailjs.sendForm(
-            'YOUR_SERVICE_ID_HERE',      // Replace with your EmailJS service ID
-            'YOUR_TEMPLATE_ID_HERE',     // Replace with your EmailJS template ID
-            this
-        ).then(
-            function(response) {
-                console.log('SUCCESS!', response.status, response.text);
-                alert('Thank you for your inquiry! We will contact you shortly.');
-                contactForm.reset();
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            },
-            function(error) {
-                console.log('FAILED...', error);
-                alert('Oops! Something went wrong. Please try again or contact us directly.');
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        );
-    });
-}
 
 // Header scroll effect
 window.addEventListener('scroll', function() {
@@ -317,35 +287,174 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
             
-            // Add admin email as hidden field for template
-            const adminEmailInput = document.createElement('input');
-            adminEmailInput.type = 'hidden';
-            adminEmailInput.name = 'admin_email';
-            adminEmailInput.value = ADMIN_EMAIL;
-            this.appendChild(adminEmailInput);
+            console.log('📧 Sending booking form via EmailJS API...');
             
-            // Send email via EmailJS
-            emailjs.sendForm(
-                EMAILJS_SERVICE_ID,              // Use configuration variable
-                EMAILJS_BOOKING_TEMPLATE,        // Use configuration variable
-                this
-            ).then(
-                function(response) {
-                    console.log('SUCCESS!', response.status, response.text);
-                    alert('Thank you for your inquiry! We will contact you shortly.');
-                    modalForm.reset();
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    closeBookingModal();
-                },
-                function(error) {
-                    console.log('FAILED...', error);
-                    alert('Oops! Something went wrong. Please try again or contact us directly at +91 9614028424.');
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
+            // Get all form values
+            const customerName = this.querySelector('input[name="name"]').value;
+            const customerEmail = this.querySelector('input[name="email"]').value;
+            const customerPhone = this.querySelector('input[name="phone"]').value;
+            const eventType = this.querySelector('select[name="event_type"]').value;
+            const packageType = this.querySelector('select[name="package"]').value;
+            const customerMessage = this.querySelector('textarea[name="message"]').value;
+            
+            // Create formatted message for ADMIN with all details
+            const adminMessage = `
+CUSTOMER DETAILS:
+Name: ${customerName}
+Email: ${customerEmail}
+Phone: ${customerPhone}
+Event Type: ${eventType}
+Package: ${packageType}
+
+EVENT VISION:
+${customerMessage}
+            `.trim();
+            
+            // Prepare email data for EmailJS API - SEND TO ADMIN
+            const emailData = {
+                service_id: EMAILJS_SERVICE_ID,
+                template_id: EMAILJS_BOOKING_TEMPLATE,
+                user_id: EMAILJS_PUBLIC_KEY,
+                template_params: {
+                    admin_email: ADMIN_EMAIL,
+                    name: customerName,
+                    email: customerEmail,
+                    phone: customerPhone,
+                    event_type: eventType,
+                    package: packageType,
+                    message: adminMessage
                 }
-            );
+            };
+            
+            // Prepare confirmation email for CUSTOMER - Professional & Formal
+            const formalCustomerMessage = `
+Dear ${customerName},
+
+Thank you for choosing Royal Desi Crew for your upcoming event! We are honored that you have entrusted us with creating an unforgettable experience.
+
+We have successfully received your booking inquiry and appreciate the details you have shared with us:
+
+Event Type: ${eventType}
+Package Selected: ${packageType}
+
+Our team is reviewing your requirements right now, and we will contact you within 24 hours to:
+✓ Confirm all event details
+✓ Discuss pricing and packages
+✓ Answer any questions you may have
+✓ Begin planning your perfect event
+
+At Royal Desi Crew, your satisfaction is our top priority. With 500+ successfully executed events since 2017, we are confident in delivering excellence for your special occasion.
+
+We look forward to collaborating with you and bringing your vision to life!
+
+Warm regards,
+
+Royal Desi Crew
+Premium Event Management & Production
+📞 +91 9614028424
+📧 royaldesicrew@gmail.com
+
+P.S. If you have any urgent questions before we contact you, feel free to reach out directly. We're here to help!
+            `.trim();
+            
+            const customerEmailData = {
+                service_id: EMAILJS_SERVICE_ID,
+                template_id: EMAILJS_BOOKING_TEMPLATE,
+                user_id: EMAILJS_PUBLIC_KEY,
+                template_params: {
+                    admin_email: customerEmail,  // Send to customer
+                    name: customerName,
+                    email: customerEmail,
+                    phone: customerPhone,
+                    event_type: eventType,
+                    package: packageType,
+                    message: formalCustomerMessage
+                }
+            };
+            
+            console.log('Admin Email Data:', emailData);
+            console.log('Customer Email Data:', customerEmailData);
+            
+            // Send both emails in parallel
+            Promise.all([
+                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(emailData)
+                }).then(response => {
+                    console.log('Admin email response status:', response.status);
+                    if (response.status === 200) return { success: true };
+                    return response.json();
+                }),
+                
+                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(customerEmailData)
+                }).then(response => {
+                    console.log('Customer email response status:', response.status);
+                    if (response.status === 200) return { success: true };
+                    return response.json();
+                })
+            ])
+            .then(results => {
+                console.log('✓ Both emails sent successfully!', results);
+                showSuccessModal('✓ Book Successfully!', 'Thank you for your booking.\nWe will contact you within 24 hours.');
+                modalForm.reset();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                closeBookingModal();
+            })
+            .catch(error => {
+                console.error('❌ Complete error details:', error);
+                alert('Error: ' + error.message + '\n\nPlease contact us directly at +91 9614028424.');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
         });
+    }
+});
+
+// ===== Success Modal Functions =====
+
+function showSuccessModal(title, message) {
+    const successModal = document.getElementById('successModal');
+    const successTitle = document.getElementById('successTitle');
+    const successMessage = document.getElementById('successMessage');
+    
+    if (successModal && successTitle && successMessage) {
+        successTitle.textContent = title;
+        successMessage.textContent = message;
+        successModal.style.display = 'flex';
+        successModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeSuccessModal() {
+    const successModal = document.getElementById('successModal');
+    if (successModal) {
+        successModal.classList.remove('show');
+        successModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close success modal when clicking outside
+window.addEventListener('click', function(event) {
+    const successModal = document.getElementById('successModal');
+    if (event.target === successModal) {
+        closeSuccessModal();
+    }
+});
+
+// Close success modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const successModal = document.getElementById('successModal');
+        if (successModal && successModal.style.display === 'flex') {
+            closeSuccessModal();
+        }
     }
 });
 
@@ -400,34 +509,455 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'Scheduling...';
             submitBtn.disabled = true;
             
-            // Add admin email as hidden field for template
-            const adminEmailInput = document.createElement('input');
-            adminEmailInput.type = 'hidden';
-            adminEmailInput.name = 'admin_email';
-            adminEmailInput.value = ADMIN_EMAIL;
-            this.appendChild(adminEmailInput);
+            console.log('📧 Sending consultation form via EmailJS API...');
             
-            // Send email via EmailJS
-            emailjs.sendForm(
-                EMAILJS_SERVICE_ID,                  // Use configuration variable
-                EMAILJS_CONSULTATION_TEMPLATE,       // Use configuration variable
-                this
-            ).then(
-                function(response) {
-                    console.log('SUCCESS!', response.status, response.text);
-                    alert('Thank you! We\'ll schedule your free consultation shortly.');
-                    consultationForm.reset();
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    closeConsultationModal();
-                },
-                function(error) {
-                    console.log('FAILED...', error);
-                    alert('Oops! Something went wrong. Please contact us directly at +91 9614028424.');
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
+            // Get all form values
+            const customerName = this.querySelector('input[name="name"]').value;
+            const customerEmail = this.querySelector('input[name="email"]').value;
+            const customerPhone = this.querySelector('input[name="phone"]').value;
+            const eventType = this.querySelector('select[name="event_type"]').value;
+            const customerMessage = this.querySelector('textarea[name="message"]').value;
+            
+            // Create formatted message for ADMIN with all details
+            const adminMessage = `
+CONSULTATION REQUEST DETAILS:
+Name: ${customerName}
+Email: ${customerEmail}
+Phone: ${customerPhone}
+Event Type: ${eventType}
+
+EVENT VISION:
+${customerMessage}
+            `.trim();
+            
+            // Prepare email data for EmailJS API - SEND TO ADMIN
+            const emailData = {
+                service_id: EMAILJS_SERVICE_ID,
+                template_id: EMAILJS_CONSULTATION_TEMPLATE,
+                user_id: EMAILJS_PUBLIC_KEY,
+                template_params: {
+                    admin_email: ADMIN_EMAIL,
+                    name: customerName,
+                    email: customerEmail,
+                    phone: customerPhone,
+                    event_type: eventType,
+                    message: adminMessage
                 }
-            );
+            };
+            
+            // Prepare confirmation email for CUSTOMER - Professional & Formal
+            const formalCustomerMessage = `
+Dear ${customerName},
+
+Thank you for your interest in Royal Desi Crew! We are delighted that you have chosen to schedule a consultation with us.
+
+We have successfully received your consultation request for:
+Event Type: ${eventType}
+
+Our team is incredibly excited to learn more about your vision and help bring it to life. We will contact you within 24 hours to:
+✓ Confirm your preferred consultation time
+✓ Discuss your event vision in detail
+✓ Explore customized package options
+✓ Address any questions or special requirements
+✓ Begin the journey of creating your unforgettable event
+
+As a company dedicated to excellence, we take pride in understanding our clients' unique needs and delivering exceptional results. With 500+ successfully executed events since 2017, you can be confident that you're in expert hands.
+
+We look forward to our conversation and the opportunity to work with you!
+
+Best regards,
+
+Royal Desi Crew
+Premium Event Management & Production
+📞 +91 9614028424
+📧 royaldesicrew@gmail.com
+
+P.S. If you'd like to reach out before our scheduled call, please don't hesitate to contact us. We're here to support your vision!
+            `.trim();
+            
+            const customerEmailData = {
+                service_id: EMAILJS_SERVICE_ID,
+                template_id: EMAILJS_CONSULTATION_TEMPLATE,
+                user_id: EMAILJS_PUBLIC_KEY,
+                template_params: {
+                    admin_email: customerEmail,  // Send to customer
+                    name: customerName,
+                    email: customerEmail,
+                    phone: customerPhone,
+                    event_type: eventType,
+                    message: formalCustomerMessage
+                }
+            };
+            
+            console.log('Admin Email Data:', emailData);
+            console.log('Customer Email Data:', customerEmailData);
+            
+            // Send both emails in parallel
+            Promise.all([
+                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(emailData)
+                }).then(response => {
+                    console.log('Admin email response status:', response.status);
+                    if (response.status === 200) return { success: true };
+                    return response.json();
+                }),
+                
+                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(customerEmailData)
+                }).then(response => {
+                    console.log('Customer email response status:', response.status);
+                    if (response.status === 200) return { success: true };
+                    return response.json();
+                })
+            ])
+            .then(results => {
+                console.log('✓ Both emails sent successfully!', results);
+                showSuccessModal('✓ Submit Successfully!', 'Thank you for scheduling your consultation.\nWe will reach out within 24 hours.');
+                consultationForm.reset();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                closeConsultationModal();
+            })
+            .catch(error => {
+                console.error('❌ Complete error details:', error);
+                alert('Error: ' + error.message + '\n\nPlease contact us directly at +91 9614028424.');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
         });
     }
+});
+
+// ===== Gallery Modal Functionality =====
+
+function openGalleryModal(category = 'weddings') {
+    console.log('🎬 openGalleryModal called with category:', category);
+    const galleryModal = document.getElementById('galleryModal');
+    console.log('Gallery modal element:', galleryModal);
+    
+    if (galleryModal) {
+        showGalleryByCategory(category);
+        galleryModal.classList.add('show');
+        console.log('✅ Modal show class added, classes:', galleryModal.className);
+        // Prevent body scroll when modal is open
+        document.body.style.overflow = 'hidden';
+    } else {
+        console.error('❌ Gallery modal element not found!');
+    }
+}
+
+function closeGalleryModal() {
+    const galleryModal = document.getElementById('galleryModal');
+    if (galleryModal) {
+        galleryModal.classList.remove('show');
+        // Re-enable body scroll
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function goToGalleryFilter(category) {
+    // Open gallery modal with specified category
+    openGalleryModal(category);
+}
+
+function showGalleryByCategory(category) {
+    // Hide all gallery tabs
+    document.querySelectorAll('.gallery-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Remove hidden class from all gallery items (in case they were hidden by old code)
+    const allItems = document.querySelectorAll('#mainGallery .gallery-item');
+    console.log(`📸 Found ${allItems.length} gallery items, removing hidden class...`);
+    allItems.forEach(item => {
+        item.classList.remove('hidden');
+    });
+
+    // Show the requested category
+    if (category === 'weddings') {
+        const weddingTab = document.getElementById('wedding-gallery-content');
+        if (weddingTab) {
+            weddingTab.classList.add('active');
+            const visibleItems = weddingTab.querySelectorAll('.gallery-item');
+            console.log(`✅ Wedding gallery showing ${visibleItems.length} photos`);
+        }
+    } else if (category === 'corporate') {
+        const corporateTab = document.getElementById('corporate-gallery-content');
+        if (corporateTab) corporateTab.classList.add('active');
+    } else if (category === 'birthdays') {
+        const birthdayTab = document.getElementById('birthday-gallery-content');
+        if (birthdayTab) birthdayTab.classList.add('active');
+    } else if (category === 'decor') {
+        const decorTab = document.getElementById('decor-gallery-content');
+        if (decorTab) decorTab.classList.add('active');
+    }
+
+    console.log('Gallery modal showing category:', category);
+}
+
+function filterGallery(category) {
+    const items = document.querySelectorAll('#mainGallery .gallery-item');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    // Update active button
+    buttons.forEach(btn => {
+        if (btn.dataset.filter === category) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    
+    // Show/hide items based on category
+    items.forEach(item => {
+        if (category === 'all' || item.dataset.category === category) {
+            item.classList.remove('hidden');
+        } else {
+            item.classList.add('hidden');
+        }
+    });
+    
+    console.log('Gallery filtered by category:', category);
+}
+
+// ===== Questionnaire Modal Functionality =====
+
+let questionnaireState = {
+    currentStep: 1,
+    serviceType: '',
+    guestsCount: null,
+    preferences: [],
+    budget: null
+};
+
+function openQuestionnaire(serviceType) {
+    questionnaireState.serviceType = serviceType;
+    questionnaireState.currentStep = 1;
+    questionnaireState.guestsCount = null;
+    questionnaireState.preferences = [];
+    questionnaireState.budget = null;
+    
+    const modal = document.getElementById('questionnaireModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        goToStep(1);
+    }
+    console.log(`Opened questionnaire for: ${serviceType}`);
+}
+
+function closeQuestionnaire() {
+    const modal = document.getElementById('questionnaireModal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function goToStep(stepNumber) {
+    // Hide all steps
+    document.querySelectorAll('.questionnaire-step').forEach(step => {
+        step.classList.remove('active');
+    });
+    
+    // Show selected step
+    const selectedStep = document.getElementById(`step${stepNumber}`);
+    if (selectedStep) {
+        selectedStep.classList.add('active');
+        questionnaireState.currentStep = stepNumber;
+    }
+    
+    // Update body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function selectGuests(count) {
+    questionnaireState.guestsCount = count;
+    
+    // Update button states
+    document.querySelectorAll('.guest-btn').forEach(btn => {
+        btn.classList.remove('active');
+        const btnCount = parseInt(btn.textContent);
+        if ((count === 50 && btn.textContent.includes('Up to 50')) ||
+            (count === 100 && btn.textContent.includes('50-100')) ||
+            (count === 250 && btn.textContent.includes('100-250')) ||
+            (count === 500 && btn.textContent.includes('250+'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    console.log(`Guest count selected: ${count}`);
+}
+
+function selectBudget(budgetRange) {
+    questionnaireState.budget = budgetRange;
+    
+    // Update button states
+    document.querySelectorAll('.budget-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((budgetRange === '5-7' && btn.textContent.includes('Standard')) ||
+            (budgetRange === '12-15' && btn.textContent.includes('Premium')) ||
+            (budgetRange === '20-35' && btn.textContent.includes('Luxury'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    console.log(`Budget selected: ${budgetRange}`);
+}
+
+function getPackageRecommendation(budget) {
+    const packages = {
+        '5-7': {
+            name: '💎 SILVER PACKAGE',
+            desc: 'Perfect for intimate gatherings with essential services',
+            features: [
+                'Basic Event Planning & Coordination',
+                'Venue Liaison & Setup',
+                'Professional Basic Décor',
+                'Photography (4-6 hours)',
+                'Sound & Lighting System',
+                'Professional Team Support'
+            ],
+            price: '₹5,00,000 - ₹7,00,000'
+        },
+        '12-15': {
+            name: '👑 GOLD PACKAGE',
+            desc: 'Comprehensive planning with premium amenities included',
+            features: [
+                'Full Event Planning & Coordination',
+                'Premium Décor & Theme Design',
+                'Professional Photography & Videography (8 hours)',
+                'HD Video Editing & Highlights',
+                'Expert Lighting & Sound System',
+                'Catering Coordination',
+                'Guest Management & Flow Coordination',
+                'Post-Event Photo Albums'
+            ],
+            price: '₹12,00,000 - ₹15,00,000'
+        },
+        '20-35': {
+            name: '✨ PLATINUM PACKAGE',
+            desc: 'Ultimate luxury experience with white-glove service',
+            features: [
+                'Dedicated Event Manager & Team',
+                'Luxury Décor & Bespoke Themework',
+                'Full Day Photography + Videography (12+ hours)',
+                '4K Professional Video Production',
+                'Premium Drone Photography & Videography',
+                'Live Streaming Services',
+                'Celebrity/Artist Coordination (if applicable)',
+                'Premium Catering Coordination',
+                'Professional Guest Flow Management',
+                'Complete Post-Production with Cinema-Quality Editing',
+                'Custom Photo & Video Books'
+            ],
+            price: '₹20,00,000 - ₹35,00,000'
+        }
+    };
+    
+    return packages[budget] || packages['12-15'];
+}
+
+function displayPackageRecommendation() {
+    const package = getPackageRecommendation(questionnaireState.budget);
+    
+    document.getElementById('packageName').textContent = package.name;
+    document.getElementById('packageDesc').textContent = package.desc;
+    document.getElementById('packagePrice').textContent = package.price;
+    
+    const features = document.getElementById('packageFeatures');
+    features.innerHTML = '';
+    
+    package.features.forEach(feature => {
+        const li = document.createElement('li');
+        li.textContent = feature;
+        features.appendChild(li);
+    });
+}
+
+function connectViaWhatsApp() {
+    const package = getPackageRecommendation(questionnaireState.budget);
+    const preferencesText = questionnaireState.preferences.length > 0 
+        ? questionnaireState.preferences.join(', ')
+        : 'Standard Services';
+    
+    const budgetMap = {
+        '5-7': '₹5-7 Lakhs (Standard)',
+        '12-15': '₹12-15 Lakhs (Premium)',
+        '20-35': '₹20-35 Lakhs (Luxury)'
+    };
+    
+    const message = `Hi Royal Desi Crew! I'm interested in planning my ${questionnaireState.serviceType}. 
+
+Estimated Guests: ${questionnaireState.guestsCount || 'Not specified'}
+Budget Range: ${budgetMap[questionnaireState.budget] || 'Not specified'}
+Preferences: ${preferencesText}
+
+I'm interested in the ${package.name.split('PACKAGE')[0].trim()} package.
+
+Can you provide more details and confirm availability?`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/919614028424?text=${encodedMessage}`;
+    
+    closeQuestionnaire();
+    window.open(whatsappURL, '_blank');
+    
+    console.log('Connected via WhatsApp with package recommendation');
+}
+
+// Close questionnaire modal when clicking outside
+window.addEventListener('click', function(event) {
+    const questionnaireModal = document.getElementById('questionnaireModal');
+    if (event.target === questionnaireModal) {
+        closeQuestionnaire();
+    }
+});
+
+// Close questionnaire with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const questionnaireModal = document.getElementById('questionnaireModal');
+        if (questionnaireModal && questionnaireModal.style.display === 'flex') {
+            closeQuestionnaire();
+        }
+    }
+});
+
+// Update recommendation when moving to step 3
+document.addEventListener('click', function(event) {
+    if (event.target.textContent.includes('Next →') && questionnaireState.currentStep === 2) {
+        setTimeout(() => {
+            displayPackageRecommendation();
+        }, 100);
+    }
+});
+
+// Track preferences checkbox changes
+document.addEventListener('change', function(event) {
+    if (event.target.name === 'preferences') {
+        questionnaireState.preferences = [];
+        document.querySelectorAll('input[name="preferences"]:checked').forEach(checkbox => {
+            questionnaireState.preferences.push(checkbox.value);
+        });
+        console.log('Updated preferences:', questionnaireState.preferences);
+    }
+});
+
+// Initialize wedding gallery on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Show wedding gallery and hide empty states by default
+    const mainGallery = document.getElementById('mainGallery');
+    if (mainGallery) {
+        mainGallery.style.display = 'grid';
+    }
+    document.querySelectorAll('.empty-gallery-state').forEach(state => {
+        state.style.display = 'none';
+    });
 });
