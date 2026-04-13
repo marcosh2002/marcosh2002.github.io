@@ -21,17 +21,10 @@ add_filter('mime_types', function($mimes) {
     return $mimes;
 });
 
-// Load all styles and scripts with MIME type handling
+// Load all scripts only (CSS is loaded directly in header.php)
 add_action('wp_enqueue_scripts', function() {
     $url = get_template_directory_uri();
     $ver = time();
-    
-    // Load external CSS first (with dependencies)
-    wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', [], '6.4.0');
-    wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@300;400;500;600&family=Prata&display=swap', [], null);
-    
-    // Load theme CSS FIRST with dependencies on external fonts
-    wp_enqueue_style('theme-main', $url . '/assets/css/main.css', ['google-fonts', 'fontawesome'], $ver);
     
     // Load all JS files in order (photos-loader first)
     wp_enqueue_script('photos-loader', $url . '/assets/js/photos-loader.js', [], $ver, true);
