@@ -32,6 +32,16 @@ add_action('wp_enqueue_scripts', function() {
     wp_enqueue_script('theme-js', $url . '/assets/js/main.js', [], $ver, true);
 });
 
+// CRITICAL: Prevent WordPress from loading any stylesheets
+// All CSS is inline in header.php to avoid MIME type issues
+add_action('wp_print_styles', function() {
+    global $wp_styles;
+    if (is_object($wp_styles)) {
+        // Remove all registered styles to prevent external CSS loading
+        $wp_styles->queue = [];
+    }
+}, 100);
+
 // Add proper script type attributes
 add_filter('script_loader_tag', function($tag, $handle) {
     return str_replace('<script ', '<script type="application/javascript" ', $tag);
