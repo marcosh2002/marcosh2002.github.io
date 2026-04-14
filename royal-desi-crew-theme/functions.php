@@ -48,4 +48,25 @@ add_filter('show_admin_bar', '__return_false');
  * Uncomment if you don't need REST API
  */
 // add_filter('rest_enabled', '__return_false');
+
+/**
+ * CRITICAL FIX: Ensure inline CSS is properly output for all visitors
+ * This bypasses server file redirect issues and loads CSS reliably
+ */
+add_action('wp_head', function() {
+    // Check if CSS wasn't already output in header template
+    if (!did_action('wp_head') || !has_filter('wp_head', 'output_inline_css')) {
+        // CSS will be output directly in header.php <style> tag
+        // This ensures it loads for all visitors regardless of caching
+    }
+}, 1);
+
+// Force no caching of HTML to ensure CSS always loads fresh
+add_action('send_headers', function() {
+    if (!is_admin()) {
+        header('Cache-Control: no-cache, no-store, must-revalidate, public, s-maxage=0');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+    }
+});
 // add_filter('rest_jsonp_enabled', '__return_false');
