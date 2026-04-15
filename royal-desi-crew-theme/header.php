@@ -121,10 +121,6 @@ header.header {
 }
 .hero {
     margin-top: 0;
-    background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.8) 100%), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><rect fill="%23000" width="1920" height="1080"/></svg>');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
     color: white;
     padding: 120px 20px;
     text-align: center;
@@ -133,6 +129,47 @@ header.header {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+.hero-bg-carousel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.hero-bg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+.hero-bg-slide:first-child {
+    opacity: 1;
+}
+.hero-bg-slide.active {
+    opacity: 1;
+}
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.7) 100%);
+    z-index: 2;
+}
+.hero-content {
+    position: relative;
+    z-index: 3;
 }
 .hero h1 {
     font-size: 56px;
